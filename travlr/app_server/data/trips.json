@@ -1,0 +1,20 @@
+[
+  {
+    "code": "GALR210214",
+    "name": "Gale Reef",
+    "image": "reef1.jpg",
+    "description": "<p>Gale Reef description goes here...</p>"
+  },
+  {
+    "code": "DAWR210214",
+    "name": "Dawson’s Reef",
+    "image": "reef2.jpg",
+    "description": "<p>Dawson’s Reef description goes here...</p>"
+  },
+  {
+    "code": "CLIR210214",
+    "name": "Claire’s Reef",
+    "image": "reef3.jpg",
+    "description": "<p>Claire’s Reef description goes here...</p>"
+  }
+]
