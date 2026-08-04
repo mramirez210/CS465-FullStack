@@ -2,11 +2,10 @@ const mongoose = require('mongoose');
 const Trip = require('../models/travlr');
 const Model = mongoose.model('trips');
 
-// GET: /trips - lists all the trips
 const tripsList = async (req, res) => {
     try {
         const q = await Model
-            .find({}) // empty filter returns all records
+            .find({})
             .exec();
 
         if (!q || q.length === 0) {
@@ -25,7 +24,66 @@ const tripsList = async (req, res) => {
     }
 };
 
-// GET: /trips/:tripCode - returns a single trip by code
+const tripsAddTrip = async (req, res) => {
+    try {
+        const newTrip = new Trip({
+            code: req.body.code,
+            name: req.body.name,
+            length: req.body.length,
+            start: req.body.start,
+            resort: req.body.resort,
+            perPerson: req.body.perPerson,
+            image: req.body.image,
+            description: req.body.description
+        });
+
+        const q = await newTrip.save();
+
+        return res
+            .status(201)
+            .json(q);
+    } catch (err) {
+        return res
+            .status(400)
+            .json(err);
+    }
+};
+
+const tripsUpdateTrip = async (req, res) => {
+    try {
+        const q = await Model
+            .findOneAndUpdate(
+                { 'code': req.params.tripCode },
+                {
+                    code: req.body.code,
+                    name: req.body.name,
+                    length: req.body.length,
+                    start: req.body.start,
+                    resort: req.body.resort,
+                    perPerson: req.body.perPerson,
+                    image: req.body.image,
+                    description: req.body.description
+                },
+                { new: true }
+            )
+            .exec();
+
+        if (!q) {
+            return res
+                .status(404)
+                .json({ "message": "Trip not found with code: " + req.params.tripCode });
+        } else {
+            return res
+                .status(200)
+                .json(q);
+        }
+    } catch (err) {
+        return res
+            .status(500)
+            .json(err);
+    }
+};
+
 const tripsFindByCode = async (req, res) => {
     try {
         const q = await Model
@@ -50,5 +108,7 @@ const tripsFindByCode = async (req, res) => {
 
 module.exports = {
     tripsList,
-    tripsFindByCode
+    tripsFindByCode,
+    tripsAddTrip,
+    tripsUpdateTrip
 };
