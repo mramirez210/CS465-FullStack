@@ -1,3 +1,7 @@
-export interface AuthResponse {
-  token: string;
+export class AuthResponse {
+token: string;
+constructor()
+{
+this.token = '';
+}
 }

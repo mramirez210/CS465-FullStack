@@ -1,30 +1,28 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule } from '@angular/forms'; 
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthenticationService } from '../services/authentication.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
 export class LoginComponent implements OnInit {
-  submitted = false;
-  authenticating = false;
-  errorMessage = '';
+  formError = '';
   statusMessage = '';
   returnUrl = '/';
 
-  loginForm = this.formBuilder.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required]
-  });
+  credentials = {
+    name: '',
+    email: '',
+    password: ''
+  };
 
   constructor(
-    private formBuilder: FormBuilder,
     private authenticationService: AuthenticationService,
     private route: ActivatedRoute,
     private router: Router
@@ -44,30 +42,21 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  get f() {
-    return this.loginForm.controls;
-  }
+  onLoginSubmit(): void {
+    this.formError = '';
 
-  onSubmit(): void {
-    this.submitted = true;
-    this.errorMessage = '';
-
-    if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
+    if (!this.credentials.email || !this.credentials.password) {
+      this.formError = 'All fields are required, please try again.';
       return;
     }
 
-    this.authenticating = true;
-    const credentials = this.loginForm.getRawValue();
-
     this.authenticationService.login(
-      credentials.email || '',
-      credentials.password || ''
+      this.credentials.email,
+      this.credentials.password
     ).subscribe({
       next: () => this.router.navigateByUrl(this.returnUrl),
       error: (error) => {
-        this.errorMessage = error.error?.message || 'Login failed. Check your credentials.';
-        this.authenticating = false;
+        this.formError = error.error?.message || 'Login failed. Check your credentials.';
       }
     });
   }

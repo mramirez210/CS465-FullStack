@@ -1,35 +1,24 @@
-<header class="admin-header">
-  <nav class="navbar navbar-expand-md" aria-label="Admin navigation">
-    <div class="container-xl nav-layout">
-      <a class="navbar-brand" routerLink="/" aria-label="Travlr Getaways Admin home">
-        <img src="assets/images/logo.png" alt="Travlr Getaways">
-        <span>Admin</span>
-      </a>
-
-      <div class="navbar-nav ms-auto flex-row flex-wrap justify-content-end gap-2">
-        <span *ngIf="isLoggedIn()" class="user-name" aria-label="Signed in user">
-          {{ currentUserName() }}
-        </span>
-        <a
-          class="nav-link"
-          routerLink="/"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-        >Trips</a>
-        <a
-          *ngIf="isLoggedIn()"
-          class="nav-link"
-          routerLink="/add-trip"
-          routerLinkActive="active"
-        >Add Trip</a>
-        <a class="nav-link public-link" href="http://localhost:3000/travel">Public Site</a>
-        <a *ngIf="!isLoggedIn()" class="nav-link" routerLink="/login" routerLinkActive="active">
-          Log In
-        </a>
-        <button *ngIf="isLoggedIn()" class="nav-link nav-button" type="button" (click)="logout()">
-          Log Out
-        </button>
-      </div>
-    </div>
-  </nav>
-</header>
+<nav class="navbar navbar-expand navbar-light bg-light">
+<a class="navbar-brand" href="#"><img
+src="/assets/images/logo.png"></a>
+<button class="navbar-toggler" type="button" data-toggle="collapse"
+data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup"
+aria-expanded="false" aria-label="Toggle navigation">
+<span class="navbar-toggler-icon"></span>
+</button>
+<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+<div class="navbar-nav">
+<a class="nav-link active" routerLink="">Trips<span class="
+sr-only ">(current)</span></a>
+</div>
+</div>
+<div class="navbar-end ">
+<a class="nav-item" routerLink="login" *ngIf="!isLoggedIn()">
+<span class="has-icon-left">Log In</span>
+</a>
+<a class="nav-item active" (click)="onLogout()"
+*ngIf="isLoggedIn()">
+<span class="has-icon-left ">Log Out</span>
+</a>
+</div>
+</nav>

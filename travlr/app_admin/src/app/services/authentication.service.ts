@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { AuthResponse } from '../models/auth-response';
 import { User } from '../models/user';
@@ -13,24 +13,25 @@ interface JwtPayload extends User {
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
+  private readonly http = inject(HttpClient);
+  private readonly storage = inject(BROWSER_STORAGE);
+
   private readonly apiUrl = 'http://localhost:3000/api';
   private readonly tokenKey = 'travlr-token';
 
-  constructor(
-    private http: HttpClient,
-    @Inject(BROWSER_STORAGE) private storage: Storage
-  ) {}
-
   login(email: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { email, password })
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/login`, { email, password })
       .pipe(tap((response) => this.saveToken(response.token)));
   }
 
   register(user: User, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, {
-      ...user,
-      password
-    }).pipe(tap((response) => this.saveToken(response.token)));
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/register`, {
+        ...user,
+        password,
+      })
+      .pipe(tap((response) => this.saveToken(response.token)));
   }
 
   getToken(): string {
@@ -77,7 +78,15 @@ export class AuthenticationService {
         .replace(/-/g, '+')
         .replace(/_/g, '/')
         .padEnd(Math.ceil(encodedPayload.length / 4) * 4, '=');
-      return JSON.parse(atob(normalized)) as JwtPayload;
+
+      const jsonPayload = decodeURIComponent(
+        atob(normalized)
+          .split('')
+          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      );
+
+      return JSON.parse(jsonPayload) as JwtPayload;
     } catch {
       return null;
     }

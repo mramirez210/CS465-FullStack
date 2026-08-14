@@ -1,44 +1,46 @@
-// Bringing in the DB connection and Trip schema
-const Mongoose = require('./db');
+require('dotenv').config();
+
+const fs = require('fs');
+const path = require('path');
+const { close, connect } = require('./db');
 const Trip = require('./travlr');
+const User = require('./user');
 
-// Reading seed data from the json file
-var fs = require('fs');
-var trips = JSON.parse(fs.readFileSync('./data/trips.json', 'utf8'));
-
-// Helper function to ensure Mongoose is connected before querying
-const waitForConnection = () => {
-  return new Promise((resolve, reject) => {
-    // readyState 1 means 'connected'
-    if (Mongoose.connection.readyState === 1) {
-      return resolve();
-    }
-    // If not connected yet, listen for the 'connected' event
-    Mongoose.connection.once('connected', resolve);
-    Mongoose.connection.once('error', reject);
-  });
+const tripsPath = path.join(__dirname, '..', '..', 'data', 'trips.json');
+const trips = JSON.parse(fs.readFileSync(tripsPath, 'utf8'));
+const admin = {
+  name: process.env.ADMIN_NAME || 'Travlr Administrator',
+  email: process.env.ADMIN_EMAIL || 'admin@travlr.com',
+  password: process.env.ADMIN_PASSWORD || 'Travlr123!'
 };
 
-// Delete any existing records, then insert seed data
-const seedDB = async () => {
+const seedDatabase = async () => {
   try {
-    // 1. Wait until Mongoose is fully connected to MongoDB
-    await waitForConnection();
-
-    // 2. Perform operations safely
+    await connect();
     await Trip.deleteMany({});
-    console.log('Cleared existing trips...');
+    const insertedTrips = await Trip.insertMany(trips);
 
-    await Trip.insertMany(trips);
-    console.log('Seed data successfully inserted!');
-  } catch (err) {
-    console.error('Error seeding database:', err);
+    let adminUser = await User.findOne({ email: admin.email }).exec();
+    if (!adminUser) {
+      adminUser = new User({ name: admin.name, email: admin.email });
+    } else {
+      adminUser.name = admin.name;
+    }
+    adminUser.setPassword(admin.password);
+    await adminUser.save();
+
+    console.log(`Seeded ${insertedTrips.length} trips into the travlr database.`);
+    console.log(`Seeded administrator account ${adminUser.email}.`);
+  } catch (error) {
+    console.error('Database seed failed:', error.message);
+    process.exitCode = 1;
   } finally {
-    // 3. Gracefully close connection and exit
-    await Mongoose.connection.close();
-    process.exit(0);
+    await close();
   }
 };
 
-// Run the seed process
-seedDB();
+if (require.main === module) {
+  seedDatabase();
+}
+
+module.exports = seedDatabase;

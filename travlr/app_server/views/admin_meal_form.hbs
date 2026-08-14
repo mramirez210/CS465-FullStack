@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>{{title}}</title>
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+<body>
+  <div id="background">
+    <div id="page">
+      {{> header activeAdmin=true}}
+      <div id="contents">
+        <div class="box">
+          <div class="body">
+            <h1>{{title}}</h1>
+            <form action="{{action}}" method="post">
+              <table>
+                <tr><td>Name:</td><td><input type="text" name="name" value="{{meal.name}}" required></td></tr>
+                <tr><td>Image URL:</td><td><input type="text" name="image" value="{{meal.image}}"></td></tr>
+                <tr><td>Headline:</td><td><input type="text" name="headline" value="{{meal.headline}}"></td></tr>
+                <tr><td>Description:</td><td><textarea name="description">{{meal.description}}</textarea></td></tr>
+                <tr><td colspan="2"><button type="submit">{{submitLabel}}</button></td></tr>
+              </table>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

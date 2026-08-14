@@ -4,7 +4,6 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { Trip } from '../models/trip';
 import { TripDataService } from '../services/trip-data.service';
-
 @Component({
   selector: 'app-add-trip',
   standalone: true,

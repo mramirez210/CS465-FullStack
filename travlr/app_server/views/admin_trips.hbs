@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>{{title}}</title>
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+<body>
+  <div id="background">
+    <div id="page">
+      {{> header activeAdmin=true}}
+      <div id="contents">
+        <div class="box">
+          <div class="body">
+            <h1>{{title}}</h1>
+            <p><a href="/admin/trips/new">Add New Trip</a></p>
+            <ul id="sites">
+              {{#each trips}}
+              <li>
+                <img src="{{image}}" alt="{{name}}" height="120">
+                <h2>{{name}}</h2>
+                <p>Code: {{code}}</p>
+                <p>{{description}}</p>
+                <p>Length: {{length}}</p>
+                <p>Resort: {{resort}}</p>
+                <span class="price">Per Person: {{perPerson}}</span>
+                <span class="date">Start: {{start}}</span>
+                <p>
+                  <a href="/admin/trips/{{_id}}/edit">Edit Trip</a> |
+                  <form action="/admin/trips/{{_id}}/delete" method="post" onsubmit="return confirm('Delete this trip?');" style="display:inline;">
+                    <button type="submit" style="background:none;border:none;padding:0;color:#2c9688;text-decoration:underline;cursor:pointer;">Remove</button>
+                  </form>
+                </p>
+              </li>
+              {{/each}}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

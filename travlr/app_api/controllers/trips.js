@@ -1,114 +1,146 @@
-const mongoose = require('mongoose');
 const Trip = require('../models/travlr');
-const Model = mongoose.model('trips');
 
+const tripCodePattern = /^[A-Z]{4}\d{6}$/;
+const tripFields = [
+  'code',
+  'name',
+  'length',
+  'start',
+  'resort',
+  'perPerson',
+  'image',
+  'description'
+];
+
+const tripPayload = (body) => tripFields.reduce((payload, field) => {
+  if (body[field] !== undefined) {
+    payload[field] = body[field];
+  }
+  return payload;
+}, {});
+
+const validTripCode = (res, tripCode) => {
+  if (tripCodePattern.test(tripCode)) {
+    return true;
+  }
+
+  res.status(400).json({
+    message: 'Trip code must contain four uppercase letters and six digits.'
+  });
+  return false;
+};
+
+const sendDatabaseError = (res, error) => {
+  console.error('Trip API error:', error.message);
+
+  if (error.code === 11000) {
+    return res.status(409).json({ message: 'That trip code already exists.' });
+  }
+
+  if (error.name === 'ValidationError' || error.name === 'CastError') {
+    return res.status(400).json({ message: error.message });
+  }
+
+  return res.status(500).json({ message: 'Unable to process trip data.' });
+};
+
+/* GET /api/trips */
 const tripsList = async (req, res) => {
-    try {
-        const q = await Model
-            .find({})
-            .exec();
-
-        if (!q || q.length === 0) {
-            return res
-                .status(404)
-                .json({ "message": "No trips found" });
-        } else {
-            return res
-                .status(200)
-                .json(q);
-        }
-    } catch (err) {
-        return res
-            .status(500)
-            .json(err);
-    }
+  try {
+    const trips = await Trip.find({}).sort({ code: 1 }).lean().exec();
+    return res.status(200).json(trips);
+  } catch (error) {
+    return sendDatabaseError(res, error);
+  }
 };
 
+/* POST /api/trips */
 const tripsAddTrip = async (req, res) => {
-    try {
-        const newTrip = new Trip({
-            code: req.body.code,
-            name: req.body.name,
-            length: req.body.length,
-            start: req.body.start,
-            resort: req.body.resort,
-            perPerson: req.body.perPerson,
-            image: req.body.image,
-            description: req.body.description
-        });
-
-        const q = await newTrip.save();
-
-        return res
-            .status(201)
-            .json(q);
-    } catch (err) {
-        return res
-            .status(400)
-            .json(err);
-    }
+  try {
+    const trip = await Trip.create(tripPayload(req.body));
+    return res.status(201).json(trip);
+  } catch (error) {
+    return sendDatabaseError(res, error);
+  }
 };
 
-const tripsUpdateTrip = async (req, res) => {
-    try {
-        const q = await Model
-            .findOneAndUpdate(
-                { 'code': req.params.tripCode },
-                {
-                    code: req.body.code,
-                    name: req.body.name,
-                    length: req.body.length,
-                    start: req.body.start,
-                    resort: req.body.resort,
-                    perPerson: req.body.perPerson,
-                    image: req.body.image,
-                    description: req.body.description
-                },
-                { new: true }
-            )
-            .exec();
-
-        if (!q) {
-            return res
-                .status(404)
-                .json({ "message": "Trip not found with code: " + req.params.tripCode });
-        } else {
-            return res
-                .status(200)
-                .json(q);
-        }
-    } catch (err) {
-        return res
-            .status(500)
-            .json(err);
-    }
-};
-
+/* GET /api/trips/:tripCode */
 const tripsFindByCode = async (req, res) => {
-    try {
-        const q = await Model
-            .find({ 'code': req.params.tripCode })
-            .exec();
+  const { tripCode } = req.params;
 
-        if (!q || q.length === 0) {
-            return res
-                .status(404)
-                .json({ "message": "Trip not found" });
-        } else {
-            return res
-                .status(200)
-                .json(q);
-        }
-    } catch (err) {
-        return res
-            .status(500)
-            .json(err);
+  if (!validTripCode(res, tripCode)) {
+    return undefined;
+  }
+
+  try {
+    const trips = await Trip.find({ code: tripCode }).lean().exec();
+
+    if (trips.length === 0) {
+      return res.status(404).json({
+        message: `No trip was found with code ${tripCode}.`
+      });
     }
+
+    return res.status(200).json(trips);
+  } catch (error) {
+    return sendDatabaseError(res, error);
+  }
+};
+
+/* PUT /api/trips/:tripCode */
+const tripsUpdateTrip = async (req, res) => {
+  const { tripCode } = req.params;
+
+  if (!validTripCode(res, tripCode)) {
+    return undefined;
+  }
+
+  try {
+    const trip = await Trip.findOneAndUpdate(
+      { code: tripCode },
+      tripPayload(req.body),
+      { new: true, runValidators: true }
+    ).lean().exec();
+
+    if (!trip) {
+      return res.status(404).json({
+        message: `No trip was found with code ${tripCode}.`
+      });
+    }
+
+    return res.status(200).json(trip);
+  } catch (error) {
+    return sendDatabaseError(res, error);
+  }
+};
+
+/* DELETE /api/trips/:tripCode */
+const tripsDeleteTrip = async (req, res) => {
+  const { tripCode } = req.params;
+
+  if (!validTripCode(res, tripCode)) {
+    return undefined;
+  }
+
+  try {
+    const trip = await Trip.findOneAndDelete({ code: tripCode }).lean().exec();
+
+    if (!trip) {
+      return res.status(404).json({
+        message: `No trip was found with code ${tripCode}.`
+      });
+    }
+
+    return res.status(204).send();
+  } catch (error) {
+    return sendDatabaseError(res, error);
+  }
 };
 
 module.exports = {
-    tripsList,
-    tripsFindByCode,
-    tripsAddTrip,
-    tripsUpdateTrip
+  tripsAddTrip,
+  tripsDeleteTrip,
+  tripsFindByCode,
+  tripsList,
+  tripsUpdateTrip
 };

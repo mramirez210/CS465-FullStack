@@ -1,33 +1,37 @@
-const tripsEndpoint = 'http://localhost:3000/api/trips';
-const options = {
-method: 'GET',
-headers: {
-'Accept': 'application/json'
-}
-}
+/* GET travel view. */
+const travel = async (req, res, next) => {
+  const endpoint = process.env.TRAVLR_API_URL ||
+    `${req.protocol}://${req.get('host')}/api/trips`;
 
-//var fs = require('fs');
-//var trips = JSON.parse(fs.readFileSync('./data/trips.json',
-//'utf8'));
+  try {
+    const response = await fetch(endpoint, {
+      headers: { Accept: 'application/json' }
+    });
 
-/* GET Travel View */
-const travel = async function (req, res, next) {
-    await fetch(tripsEndpoint, options)
-    .then((res) => res.json())
-    .then((json) => {
-        let message = null;
-        if (!(json instanceof Array)) {
-            message = "API lookup error";
-            json = [];
-        } else {
-            if (!json.length) {
-                message = "No trips exist in our database!";
-            }
-        }
-        res.render("travel", { title : "travlr Getaways", trips: json});
-    })
-    .catch((err) => res.status(500).send(err.message));
+    if (!response.ok) {
+      const error = new Error(`Trip API returned HTTP ${response.status}.`);
+      error.status = response.status;
+      throw error;
+    }
+
+    const trips = await response.json();
+
+    if (!Array.isArray(trips)) {
+      const error = new Error('Trip API returned an invalid response.');
+      error.status = 502;
+      throw error;
+    }
+
+    return res.render('travel', {
+      title: 'Travlr Getaways',
+      trips,
+      message: trips.length === 0 ? 'No trips are currently available.' : null
+    });
+  } catch (error) {
+    return next(error);
+  }
 };
+
 module.exports = {
-    travel
+  travel
 };
