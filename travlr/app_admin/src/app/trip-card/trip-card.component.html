@@ -1,8 +1,8 @@
 <article class="trip-card h-100">
   <img
-    class="trip-image"
-    src="assets/images/{{ trip.image }}"
-    alt="{{ trip.name }}"
+      class="trip-image"
+      [src]="'assets/images/' + trip.image.replace('images/', '').replace('/', '')"
+      [alt]="trip.name || 'Trip Image'"
   >
   <div class="trip-card-body">
     <div class="trip-card-heading">
@@ -10,7 +10,9 @@
         <p class="trip-code">{{ trip.code }}</p>
         <h2>{{ trip.name }}</h2>
       </div>
-      <p class="trip-price">{{ trip.perPerson | currency:'USD':'symbol':'1.0-0' }}</p>
+      <p class="trip-price">
+        ${{ (trip.perPerson + '').replace('$', '') }}
+      </p>
     </div>
 
     <dl class="trip-meta">

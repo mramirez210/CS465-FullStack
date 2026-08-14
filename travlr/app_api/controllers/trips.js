@@ -1,6 +1,6 @@
 const Trip = require('../models/travlr');
 
-const tripCodePattern = /^[A-Z]{4}\d{6}$/;
+const tripCodePattern = /^[A-Z]{3,4}-?\d{3,6}$/i;
 const tripFields = [
   'code',
   'name',
@@ -25,7 +25,7 @@ const validTripCode = (res, tripCode) => {
   }
 
   res.status(400).json({
-    message: 'Trip code must contain four uppercase letters and six digits.'
+    message: 'Invalid trip code format.'
   });
   return false;
 };
@@ -95,11 +95,14 @@ const tripsUpdateTrip = async (req, res) => {
     return undefined;
   }
 
+  const updateData = tripPayload(req.body);
+  delete updateData.code; 
+
   try {
     const trip = await Trip.findOneAndUpdate(
       { code: tripCode },
-      tripPayload(req.body),
-      { new: true, runValidators: true }
+      updateData,
+      { returnDocument: 'after', runValidators: true }
     ).lean().exec();
 
     if (!trip) {

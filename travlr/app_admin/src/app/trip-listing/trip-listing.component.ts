@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Trip } from '../models/trip';
 import { AuthenticationService } from '../services/authentication.service';
@@ -18,18 +18,22 @@ export class TripListingComponent implements OnInit {
   loading = true;
   message = '';
   errorMessage = '';
+  canManageTrips = false;
 
   constructor(
     private tripDataService: TripDataService,
     private authenticationService: AuthenticationService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef
   ) {}
 
-  get canManageTrips(): boolean {
-    return this.authenticationService.isLoggedIn();
-  }
-
   ngOnInit(): void {
+    try {
+      this.canManageTrips = this.authenticationService.isLoggedIn();
+    } catch {
+      this.canManageTrips = false;
+    }
+
     const added = this.route.snapshot.queryParamMap.get('added');
     const updated = this.route.snapshot.queryParamMap.get('updated');
 
@@ -50,10 +54,13 @@ export class TripListingComponent implements OnInit {
       next: (trips) => {
         this.trips = trips;
         this.loading = false;
+        this.cdr.detectChanges();
       },
-      error: () => {
+      error: (err) => {
+        console.error(err);
         this.errorMessage = 'Trips could not be loaded from the API server.';
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -72,11 +79,13 @@ export class TripListingComponent implements OnInit {
       next: () => {
         this.trips = this.trips.filter((trip) => trip.code !== tripCode);
         this.message = `Trip ${tripCode} was deleted.`;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         this.errorMessage = error.status === 401
           ? 'Your session is no longer valid. Log in again before deleting a trip.'
           : `Trip ${tripCode} could not be deleted.`;
+        this.cdr.detectChanges();
       }
     });
   }

@@ -1,31 +1,19 @@
-import { 
-  HttpInterceptorFn, 
-  HttpRequest, 
-  HttpHandlerFn, 
-  HttpErrorResponse 
-} from '@angular/common/http';
+import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { catchError, throwError } from 'rxjs';
-import { BROWSER_STORAGE } from '../storage';
+import { AuthenticationService } from '../services/authentication.service';
 
-export const jwtInterceptor: HttpInterceptorFn = (
-  request: HttpRequest<unknown>, 
-  next: HttpHandlerFn
-) => {
-  const storage = inject(BROWSER_STORAGE);
-  const isAuthRequest = request.url.endsWith('/login') || request.url.endsWith('/register');
-  const token = storage.getItem('travlr-token');
-  
-  const authenticatedRequest = (token && !isAuthRequest)
-    ? request.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
-    : request;
+export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
+  const authService = inject(AuthenticationService);
+  const token = authService.getToken();
 
-  return next(authenticatedRequest).pipe(
-    catchError((error: HttpErrorResponse) => {
-      if (error.status === 401 && !isAuthRequest) {
-        storage.removeItem('travlr-token');
+  if (token && req.url.includes('/api')) {
+    const authReq = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`
       }
-      return throwError(() => error);
-    })
-  );
+    });
+    return next(authReq);
+  }
+
+  return next(req);
 };
