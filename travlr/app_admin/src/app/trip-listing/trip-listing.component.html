@@ -1,0 +1,35 @@
+<section aria-labelledby="trips-heading">
+  <div class="page-heading">
+    <div>
+      <p class="section-label">Trip management</p>
+      <h1 id="trips-heading">Available Trips</h1>
+      <p class="page-summary">Review current packages and maintain the customer trip catalog.</p>
+    </div>
+    <a *ngIf="canManageTrips" class="btn btn-success" routerLink="/add-trip">Add Trip</a>
+  </div>
+
+  <div *ngIf="message" class="alert alert-success" role="status">{{ message }}</div>
+  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+    {{ errorMessage }}
+    <button class="btn btn-sm btn-outline-danger ms-2" type="button" (click)="loadTrips()">
+      Retry
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading-state" aria-live="polite">Loading trips...</div>
+
+  <div *ngIf="!loading && trips.length === 0 && !errorMessage" class="empty-state">
+    <h2>No trips available</h2>
+    <p>Add a trip to begin building the customer catalog.</p>
+  </div>
+
+  <div *ngIf="!loading && trips.length > 0" class="row g-4">
+    <div *ngFor="let trip of trips" class="col-12 col-md-6 col-xl-4">
+      <app-trip-card
+        [trip]="trip"
+        [canManage]="canManageTrips"
+        (deleteRequested)="deleteTrip($event)"
+      ></app-trip-card>
+    </div>
+  </div>
+</section>

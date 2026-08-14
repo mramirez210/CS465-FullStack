@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { TripData } from '../services/trip-data';
+import { TripDataService } from '../services/trip-data';
 import { Trip } from '../models/trip';
 
 @Component({
@@ -10,32 +10,32 @@ import { Trip } from '../models/trip';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './edit-trip.html',
-  styleUrl: './edit-trip.css'
+  styleUrl: './edit-trip.css',
 })
 export class EditTrip implements OnInit {
   public editForm!: FormGroup;
-  public trip!: Trip;
-  public submitted = false;
-  public message = '';
+  trip!: Trip;
+  submitted = false;
+  message = '';
+  private originalTripCode = '';
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    private tripDataService: TripData
+    private tripDataService: TripDataService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
-    // Retrieve stashed trip ID
-    const tripCode = localStorage.getItem('tripCode');
+    var tripCode = localStorage.getItem('tripCode');
 
     if (!tripCode) {
-      alert("Something wrong, couldn't find where I stashed tripCode!");
+      alert("Something went wrong, couldn't find tripCode.");
       this.router.navigate(['']);
       return;
     }
 
-    console.log('EditTrip::ngOnInit');
-    console.log('tripcode: ' + tripCode);
+    this.originalTripCode = tripCode;
 
     this.editForm = this.formBuilder.group({
       _id: [],
@@ -46,27 +46,25 @@ export class EditTrip implements OnInit {
       resort: ['', Validators.required],
       perPerson: ['', Validators.required],
       image: ['', Validators.required],
-      description: ['', Validators.required]
+      description: ['', Validators.required],
     });
 
     this.tripDataService.getTrip(tripCode).subscribe({
-      next: (value: any) => {
+      next: (value: Trip) => {
         this.trip = value;
 
-        if (!value || (Array.isArray(value) && value.length === 0)) {
-          this.message = 'No Trip Retrieved!';
-        } else {
-          // Populate our record into the form
-          const tripData = Array.isArray(value) ? value[0] : value;
-          this.editForm.patchValue(tripData);
-          this.message = 'Trip: ' + tripCode + ' retrieved';
-        }
+        this.editForm.patchValue({
+          ...value,
+          start: this.formatDate(value.start),
+        });
 
-        console.log(this.message);
+        this.message = `Trip ${tripCode} retrieved`;
+        this.cdr.detectChanges();
       },
-      error: (error: any) => {
-        console.error('Error fetching trip: ', error);
-      }
+      error: (error: unknown) => {
+        console.log('Error:', error);
+        this.cdr.detectChanges();
+      },
     });
   }
 
@@ -74,19 +72,25 @@ export class EditTrip implements OnInit {
     this.submitted = true;
 
     if (this.editForm.valid) {
-      this.tripDataService.updateTrip(this.editForm.value).subscribe({
-        next: (value: any) => {
-          console.log(value);
-          this.router.navigate(['']);
+      this.tripDataService.updateTrip(this.originalTripCode, this.editForm.value).subscribe({
+        next: () => {
+          this.router.navigateByUrl('/');
         },
-        error: (error: any) => {
-          console.error('Error updating trip: ', error);
-        }
+        error: (error: unknown) => {
+          console.log('Error:', error);
+        },
       });
     }
   }
 
-  // Convenient getter for easy access to form fields in the HTML template
+  private formatDate(value: string): string {
+    if (!value) {
+      return '';
+    }
+
+    return new Date(value).toISOString().slice(0, 10);
+  }
+
   get f() {
     return this.editForm.controls;
   }

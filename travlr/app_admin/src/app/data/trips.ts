@@ -1,32 +1,44 @@
-export const trips = [
-    {
-        "code": "GALR240214",
-        "name": "Gale Reef",
-        "length": "4 nights / 5 days",
-        "start": "2024-02-14T08:00:00Z",
-        "resort": "Emerald Bay, 3 stars",
-        "perPerson": "799.00",
-        "image": "reef1.jpg",
-        "description": "<p>Gale Reef - Sed et augue lorem. In sit amet placerat arcu. Mauris volutpat ipsum ac justo mollis vel vestibulum orci gravida. Vestibulum sit amet porttitor odio. Nulla facilisi. Fusce at pretium felis. </p> <p> Sed consequat libero ut turpis venenatis ut aliquam risus semper. Etiam convallis mi vel risus pretium sodales. Etiam nunc lorem ullamcorper vitae laoreet. </p>"
-    },
-    {
-        "code": "DAWR240315",
-        "name": "Dawson's Reef",
-        "length": "4 nights / 5 days",
-        "start": "2024-03-15T08:00:00Z",
-        "resort": "Blue Lagoon, 4 stars",
-        "perPerson": "1199.00",
-        "image": "reef2.jpg",
-        "description": "<p>Dawson's Reef - Integer magna leo, posuere et dignissim vitae, porttitor at odio. Pellentesque a metus nec magna placerat volutpat. Nunc nisi mi, elementum sit amet aliquet quis, tristique quis nisl. Curabitur odio lacus, blandit ut hendrerit </p> <p> vulputate, vulputate at est. Morbi aliquet viverra metus eu consectetur. In lorem dui, elementum sit amet convallis ac, tincidunt vel sapien. </p>"
-    },
-    {
-        "code": "CLAR240621",
-        "name": "Claire's Reef",
-        "length": "4 nights / 5 days",
-        "start": "2024-06-21T08:00:00Z",
-        "resort": "Coral Sands, 5 stars",
-        "perPerson": "1999.00",
-        "image": "reef3.jpg",
-        "description": "<p>Claire's Reef - Donec sed felis risus. Nulla facilisi. Donec a orci tellus, et auctor odio. Fusce ac orci nibh, quis semper arcu. Cras orci neque, euismod et accumsan ac, sagittis molestie lorem. Proin odio sapien, elementum at tempor non. </p> <p> Vulputate eget libero. In hac habitasse platea dictumst. Integer purus justo, egestas eu consectetur eu, cursus in tortor. Quisque nec nunc ac mi ultrices iaculis. </p>"
-    }
-]
+import { Trip } from '../models/trip';
+
+export const trips: Trip[] = [
+  {
+    code: 'GRA-001',
+    name: 'Gale Reef Adventure',
+    length: '4 nights / 5 days',
+    start: '2026-12-31T00:00:00.000Z',
+    resort: 'Emerald Reef Resort',
+    perPerson: '$91',
+    image: '/images/reef1.jpg',
+    description: 'Gale Reef Adventure: Explore the reefs on a guided snorkeling tour.',
+  },
+  {
+    code: 'DRE-002',
+    name: "Dawson's Reef Escape",
+    length: '3 nights / 4 days',
+    start: '2026-12-31T00:00:00.000Z',
+    resort: 'Blue Bay Resort',
+    perPerson: '$95',
+    image: '/images/reef2.jpg',
+    description: "Dawson's Reef Escape: Take in the stunning coral and marine life.",
+  },
+  {
+    code: 'CRE-003',
+    name: "Claire's Reef Expedition",
+    length: '5 nights / 6 days',
+    start: '2026-12-31T00:00:00.000Z',
+    resort: 'Coral Point Villas',
+    perPerson: '$99',
+    image: '/images/reef3.jpg',
+    description: "Claire's Reef Expedition: Dive deeper into an unforgettable reef adventure.",
+  },
+  {
+    code: 'VSS-004',
+    name: 'Volcanic Sky Safari',
+    length: '2 nights / 3 days',
+    start: '2026-11-15T00:00:00.000Z',
+    resort: 'Summit Cliff Lodge',
+    perPerson: '$229',
+    image: '/images/volcano.jpg',
+    description: 'Volcanic Sky Safari: Fly over an active volcano, explore glowing lava fields, and finish the day in a luxury cliffside lodge.',
+  },
+];

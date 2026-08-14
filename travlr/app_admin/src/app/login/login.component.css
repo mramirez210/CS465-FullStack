@@ -1,0 +1,17 @@
+@import '../shared-form.css';
+
+.login-page {
+  margin: 0 auto;
+  max-width: 680px;
+}
+
+.login-form {
+  background: #fff;
+  border: 1px solid #d6dfdc;
+  border-radius: 6px;
+  padding: 28px;
+}
+
+.login-form .btn {
+  min-width: 112px;
+}

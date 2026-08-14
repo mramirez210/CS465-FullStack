@@ -1,24 +1,33 @@
-<nav class="navbar navbar-expand navbar-light bg-light">
-<a class="navbar-brand" href="#"><img
-src="/assets/images/logo.png"></a>
-<button class="navbar-toggler" type="button" data-toggle="collapse"
-data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup"
-aria-expanded="false" aria-label="Toggle navigation">
-<span class="navbar-toggler-icon"></span>
-</button>
-<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-<div class="navbar-nav">
-<a class="nav-link active" routerLink="">Trips<span class="
-sr-only ">(current)</span></a>
-</div>
-</div>
-<div class="navbar-end ">
-<a class="nav-item" routerLink="login" *ngIf="!isLoggedIn()">
-<span class="has-icon-left">Log In</span>
-</a>
-<a class="nav-item active" (click)="onLogout()"
-*ngIf="isLoggedIn()">
-<span class="has-icon-left ">Log Out</span>
-</a>
-</div>
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark shadow-sm">
+  <div class="container">
+    <a class="navbar-brand" routerLink="/">Travlr Getaways Admin</a>
+
+    <div class="ms-auto d-flex align-items-center gap-2">
+      <a class="btn btn-outline-light btn-sm" routerLink="/">Trips</a>
+      <a
+        *ngIf="isLoggedIn()"
+        class="btn btn-warning btn-sm"
+        routerLink="/add-trip">
+        Add Trip
+      </a>
+
+      <a
+        *ngIf="!isLoggedIn()"
+        class="btn btn-info btn-sm"
+        routerLink="/login">
+        Log In
+      </a>
+
+      <span *ngIf="isLoggedIn()" class="user-label d-none d-md-inline">
+        {{ currentUserName() }}
+      </span>
+      <button
+        *ngIf="isLoggedIn()"
+        type="button"
+        class="btn btn-outline-light btn-sm"
+        (click)="onLogout()">
+        Log Out
+      </button>
+    </div>
+  </div>
 </nav>

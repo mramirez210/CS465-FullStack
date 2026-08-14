@@ -1,7 +1,3 @@
-export class AuthResponse {
-token: string;
-constructor()
-{
-this.token = '';
-}
+export interface AuthResponse {
+  token: string;
 }

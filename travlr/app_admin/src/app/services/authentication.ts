@@ -1,98 +1,69 @@
 import { Inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+
 import { BROWSER_STORAGE } from '../storage';
 import { User } from '../models/user';
-import { AuthResponse } from '../models/auth-response';
-import { TripData } from '../services/trip-data';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class AuthenticationService {
-  constructor(
-    @Inject(BROWSER_STORAGE) private storage: Storage,
-    private tripData: TripData
-  ) {}
+  private readonly tokenKey = 'travlr-token';
+
+  constructor(@Inject(BROWSER_STORAGE) private storage: Storage) {}
 
   public getToken(): string {
-    return this.storage.getItem('travlr-token') ?? '';
+    return this.storage.getItem(this.tokenKey) || '';
   }
 
   public saveToken(token: string): void {
-    this.storage.setItem('travlr-token', token);
+    this.storage.setItem(this.tokenKey, token);
   }
 
   public logout(): void {
-    this.storage.removeItem('travlr-token');
+    this.storage.removeItem(this.tokenKey);
   }
 
   public isLoggedIn(): boolean {
-    const token = this.getToken();
-    if (!token) {
+    const payload = this.decodeTokenPayload();
+    if (!payload) {
       return false;
     }
 
-    const payload = this.parseJwtPayload(token);
-    if (!payload || !payload.exp) {
-      return false;
-    }
-
-    return payload.exp > Math.floor(Date.now() / 1000);
+    return typeof payload.exp === 'number' && payload.exp > Date.now() / 1000;
   }
 
   public getCurrentUser(): User | null {
-    if (!this.isLoggedIn()) {
+    const payload = this.decodeTokenPayload();
+    if (!payload || !this.isLoggedIn()) {
       return null;
     }
 
+    return {
+      email: payload.email || '',
+      name: payload.name || ''
+    } as User;
+  }
+
+  private decodeTokenPayload(): any | null {
     const token = this.getToken();
-    const payload = this.parseJwtPayload(token);
-
-    if (!payload) {
+    if (!token) {
       return null;
     }
 
-    const { email, name } = payload;
-    return { email, name } as User;
-  }
-
-  public login(user: User, passwd: string): Observable<AuthResponse> {
-    return this.tripData.login(user, passwd).pipe(
-      tap((response: AuthResponse) => {
-        if (response?.token) {
-          this.saveToken(response.token);
-        }
-      })
-    );
-  }
-
-  public register(user: User, passwd: string): Observable<AuthResponse> {
-    return this.tripData.register(user, passwd).pipe(
-      tap((response: AuthResponse) => {
-        if (response?.token) {
-          this.saveToken(response.token);
-        }
-      })
-    );
-  }
-
-  private parseJwtPayload(token: string): any {
     try {
-      const base64Url = token.split('.')[1];
-      if (!base64Url) return null;
+      const parts = token.split('.');
+      if (parts.length !== 3) {
+        throw new Error('Malformed JWT');
+      }
 
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split('')
-          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-          .join('')
-      );
+      let payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      while (payload.length % 4 !== 0) {
+        payload += '=';
+      }
 
-      return JSON.parse(jsonPayload);
-    } catch (e) {
-      console.error('Failed to parse JWT payload', e);
+      return JSON.parse(atob(payload));
+    } catch {
+      this.logout();
       return null;
     }
   }

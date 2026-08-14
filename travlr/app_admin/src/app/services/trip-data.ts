@@ -1,57 +1,41 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { User } from '../models/user';
-import { AuthResponse } from '../models/auth-response';
 import { Trip } from '../models/trip';
-import { BROWSER_STORAGE } from '../storage';
+import { User } from '../models/user'; 
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
-export class TripData {
-  private baseUrl = 'http://localhost:3000/api';
-  private tripUrl = `${this.baseUrl}/trips`;
+export class TripDataService {
+    private url = '/api/trips';
 
-  constructor(
-    private http: HttpClient,
-    @Inject(BROWSER_STORAGE) private storage: Storage
-  ) {}
+    constructor(private http: HttpClient) {}
 
-  getTrips(): Observable<Trip[]> {
-    return this.http.get<Trip[]>(this.tripUrl);
-  }
+    login(user: User, password: string): Observable<{ token: string }> {
+        return this.http.post<{ token: string }>('/api/login', {
+            email: user.email,
+            password: password
+        });
+    }
 
-  addTrip(formData: Trip): Observable<Trip> {
-    return this.http.post<Trip>(this.tripUrl, formData);
-  }
+    getTrips(): Observable<Trip[]> {
+        return this.http.get<Trip[]>(this.url);
+    }
 
-  getTrip(tripCode: string): Observable<Trip> {
-    return this.http.get<Trip>(`${this.tripUrl}/${tripCode}`);
-  }
+    getTrip(tripCode: string): Observable<Trip> {
+        return this.http.get<Trip>(`${this.url}/${tripCode}`);
+    }
 
-  updateTrip(formData: Trip): Observable<Trip> {
-    return this.http.put<Trip>(`${this.tripUrl}/${formData.code}`, formData);
-  }
+    addTrip(formData: Trip): Observable<Trip> {
+        return this.http.post<Trip>(this.url, formData);
+    }
 
-  login(user: User, passwd: string): Observable<AuthResponse> {
-    return this.handleAuthAPICall('login', user, passwd);
-  }
+    updateTrip(tripCode: string, formData: Trip): Observable<Trip> {
+        return this.http.put<Trip>(`${this.url}/${tripCode}`, formData);
+    }
 
-  register(user: User, passwd: string): Observable<AuthResponse> {
-    return this.handleAuthAPICall('register', user, passwd);
-  }
-
-  private handleAuthAPICall(
-    endpoint: string,
-    user: User,
-    passwd: string
-  ): Observable<AuthResponse> {
-    const formData = {
-      name: user.name,
-      email: user.email,
-      password: passwd
-    };
-    return this.http.post<AuthResponse>(`${this.baseUrl}/${endpoint}`, formData);
-  }
+    deleteTrip(tripCode: string): Observable<{ message: string }> {
+        return this.http.delete<{ message: string }>(`${this.url}/${tripCode}`);
+    }
 }
