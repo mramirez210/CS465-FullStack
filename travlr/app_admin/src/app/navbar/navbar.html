@@ -1,0 +1,33 @@
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark shadow-sm">
+  <div class="container">
+    <a class="navbar-brand" routerLink="/">Travlr Getaways Admin</a>
+
+    <div class="ms-auto d-flex align-items-center gap-2">
+      <a class="btn btn-outline-light btn-sm" routerLink="/">Trips</a>
+      <a
+        *ngIf="isLoggedIn()"
+        class="btn btn-warning btn-sm"
+        routerLink="/add-trip">
+        Add Trip
+      </a>
+
+      <a
+        *ngIf="!isLoggedIn()"
+        class="btn btn-info btn-sm"
+        routerLink="/login">
+        Log In
+      </a>
+
+      <span *ngIf="isLoggedIn()" class="user-label d-none d-md-inline">
+        {{ currentUserName() }}
+      </span>
+      <button
+        *ngIf="isLoggedIn()"
+        type="button"
+        class="btn btn-outline-light btn-sm"
+        (click)="onLogout()">
+        Log Out
+      </button>
+    </div>
+  </div>
+</nav>

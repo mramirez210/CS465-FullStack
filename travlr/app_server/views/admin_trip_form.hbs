@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>{{title}}</title>
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+<body>
+  <div id="background">
+    <div id="page">
+      {{> header activeAdmin=true}}
+      <div id="contents">
+        <div class="box">
+          <div class="body">
+            <h1>{{title}}</h1>
+            <form action="{{action}}" method="post">
+              <table>
+                <tr><td>Code:</td><td><input type="text" name="code" value="{{trip.code}}" required></td></tr>
+                <tr><td>Name:</td><td><input type="text" name="name" value="{{trip.name}}" required></td></tr>
+                <tr><td>Length:</td><td><input type="text" name="length" value="{{trip.length}}" required></td></tr>
+                <tr><td>Start Date:</td><td><input type="date" name="start" value="{{trip.startInput}}" required></td></tr>
+                <tr><td>Resort:</td><td><input type="text" name="resort" value="{{trip.resort}}" required></td></tr>
+                <tr><td>Per Person:</td><td><input type="text" name="perPerson" value="{{trip.perPerson}}" required></td></tr>
+                <tr><td>Image URL:</td><td><input type="text" name="image" value="{{trip.image}}"></td></tr>
+                <tr><td>Description:</td><td><textarea name="description">{{trip.description}}</textarea></td></tr>
+                <tr><td colspan="2"><button type="submit">{{submitLabel}}</button></td></tr>
+              </table>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+import { Trip } from '../models/trip';
+
+export const trips: Trip[] = [
+  {
+    code: 'GRA-001',
+    name: 'Gale Reef Adventure',
+    length: '4 nights / 5 days',
+    start: '2026-12-31T00:00:00.000Z',
+    resort: 'Emerald Reef Resort',
+    perPerson: '$91',
+    image: '/images/reef1.jpg',
+    description: 'Gale Reef Adventure: Explore the reefs on a guided snorkeling tour.',
+  },
+  {
+    code: 'DRE-002',
+    name: "Dawson's Reef Escape",
+    length: '3 nights / 4 days',
+    start: '2026-12-31T00:00:00.000Z',
+    resort: 'Blue Bay Resort',
+    perPerson: '$95',
+    image: '/images/reef2.jpg',
+    description: "Dawson's Reef Escape: Take in the stunning coral and marine life.",
+  },
+  {
+    code: 'CRE-003',
+    name: "Claire's Reef Expedition",
+    length: '5 nights / 6 days',
+    start: '2026-12-31T00:00:00.000Z',
+    resort: 'Coral Point Villas',
+    perPerson: '$99',
+    image: '/images/reef3.jpg',
+    description: "Claire's Reef Expedition: Dive deeper into an unforgettable reef adventure.",
+  },
+  {
+    code: 'VSS-004',
+    name: 'Volcanic Sky Safari',
+    length: '2 nights / 3 days',
+    start: '2026-11-15T00:00:00.000Z',
+    resort: 'Summit Cliff Lodge',
+    perPerson: '$229',
+    image: '/images/volcano.jpg',
+    description: 'Volcanic Sky Safari: Fly over an active volcano, explore glowing lava fields, and finish the day in a luxury cliffside lodge.',
+  },
+];

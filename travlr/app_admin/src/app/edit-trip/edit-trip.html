@@ -1,0 +1,46 @@
+<h2 class="mb-3">Edit Trip</h2>
+<p class="text-muted">{{ message }}</p>
+
+<form [formGroup]="editForm" (ngSubmit)="onSubmit()" novalidate>
+	<div class="mb-3">
+		<label for="code" class="form-label">Code</label>
+		<input id="code" type="text" class="form-control" formControlName="code" readonly>
+	</div>
+
+	<div class="mb-3">
+		<label for="name" class="form-label">Name</label>
+		<input id="name" type="text" class="form-control" formControlName="name">
+	</div>
+
+	<div class="mb-3">
+		<label for="length" class="form-label">Length</label>
+		<input id="length" type="text" class="form-control" formControlName="length">
+	</div>
+
+	<div class="mb-3">
+		<label for="start" class="form-label">Start</label>
+		<input id="start" type="date" class="form-control" formControlName="start">
+	</div>
+
+	<div class="mb-3">
+		<label for="resort" class="form-label">Resort</label>
+		<input id="resort" type="text" class="form-control" formControlName="resort">
+	</div>
+
+	<div class="mb-3">
+		<label for="perPerson" class="form-label">Per Person</label>
+		<input id="perPerson" type="text" class="form-control" formControlName="perPerson">
+	</div>
+
+	<div class="mb-3">
+		<label for="image" class="form-label">Image Name</label>
+		<input id="image" type="text" class="form-control" formControlName="image">
+	</div>
+
+	<div class="mb-3">
+		<label for="description" class="form-label">Description</label>
+		<textarea id="description" rows="3" class="form-control" formControlName="description"></textarea>
+	</div>
+
+	<button type="submit" class="btn btn-success" [disabled]="submitted && editForm.invalid">Save</button>
+</form>

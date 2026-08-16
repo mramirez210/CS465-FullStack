@@ -1,0 +1,120 @@
+<section class="form-page" aria-labelledby="edit-trip-heading">
+  <div class="form-heading">
+    <div>
+      <p class="section-label">Maintain package</p>
+      <h1 id="edit-trip-heading">Edit Trip</h1>
+      <p>Update package details and save them to the Travlr database.</p>
+    </div>
+    <a class="btn btn-outline-secondary" routerLink="/">Cancel</a>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">Loading trip...</div>
+  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">{{ errorMessage }}</div>
+
+  <form
+    *ngIf="!loading && !errorMessage"
+    class="trip-form"
+    [formGroup]="editForm"
+    (ngSubmit)="onSubmit()"
+    novalidate
+  >
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label" for="code">Trip code</label>
+        <input id="code" class="form-control" type="text" formControlName="code" readonly>
+        <div class="form-text">Trip codes cannot be changed after creation.</div>
+      </div>
+      <div class="col-md-8">
+        <label class="form-label" for="name">Trip name</label>
+        <input
+          id="name"
+          class="form-control"
+          type="text"
+          formControlName="name"
+          [class.is-invalid]="submitted && f['name'].invalid"
+        >
+        <div class="invalid-feedback">Trip name is required.</div>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label" for="length">Duration</label>
+        <input
+          id="length"
+          class="form-control"
+          type="text"
+          formControlName="length"
+          [class.is-invalid]="submitted && f['length'].invalid"
+        >
+        <div class="invalid-feedback">Duration is required.</div>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label" for="start">Start date</label>
+        <input
+          id="start"
+          class="form-control"
+          type="date"
+          formControlName="start"
+          [class.is-invalid]="submitted && f['start'].invalid"
+        >
+        <div class="invalid-feedback">Start date is required.</div>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label" for="perPerson">Price per person</label>
+        <div class="input-group has-validation">
+          <span class="input-group-text">$</span>
+          <input
+            id="perPerson"
+            class="form-control"
+            type="text"
+            inputmode="decimal"
+            formControlName="perPerson"
+            [class.is-invalid]="submitted && f['perPerson'].invalid"
+          >
+          <div class="invalid-feedback">Enter a valid price.</div>
+        </div>
+      </div>
+
+      <div class="col-md-8">
+        <label class="form-label" for="resort">Resort</label>
+        <input
+          id="resort"
+          class="form-control"
+          type="text"
+          formControlName="resort"
+          [class.is-invalid]="submitted && f['resort'].invalid"
+        >
+        <div class="invalid-feedback">Resort is required.</div>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label" for="image">Image filename</label>
+        <input
+          id="image"
+          class="form-control"
+          type="text"
+          formControlName="image"
+          [class.is-invalid]="submitted && f['image'].invalid"
+        >
+        <div class="invalid-feedback">Image filename is required.</div>
+      </div>
+
+      <div class="col-12">
+        <label class="form-label" for="description">Description</label>
+        <textarea
+          id="description"
+          class="form-control"
+          rows="5"
+          formControlName="description"
+          [class.is-invalid]="submitted && f['description'].invalid"
+        ></textarea>
+        <div class="invalid-feedback">Description is required.</div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit" [disabled]="saving">
+        {{ saving ? 'Updating...' : 'Update Trip' }}
+      </button>
+      <a class="btn btn-outline-secondary" routerLink="/">Cancel</a>
+    </div>
+  </form>
+</section>

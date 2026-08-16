@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>{{title}}</title>
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+<body>
+  <div id="background">
+    <div id="page">
+      {{> header activeAdmin=true}}
+      <div id="contents">
+        <div class="box">
+          <div class="body">
+            <h1>{{title}}</h1>
+            <p><a href="/admin/meals/new">Add New Meal</a></p>
+            <ul id="foods">
+              {{#each meals}}
+              <li>
+                <h2>{{name}}</h2>
+                <div class="infos">
+                  <img src="{{image}}" alt="{{name}}" height="169" width="780">
+                  <p><span>{{headline}}</span> {{description}}</p>
+                </div>
+                <p>
+                  <a href="/admin/meals/{{@index}}/edit">Edit Meal</a> |
+                  <form action="/admin/meals/{{@index}}/delete" method="post" onsubmit="return confirm('Delete this meal?');" style="display:inline;">
+                    <button type="submit" style="background:none;border:none;padding:0;color:#2c9688;text-decoration:underline;cursor:pointer;">Remove</button>
+                  </form>
+                </p>
+              </li>
+              {{/each}}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

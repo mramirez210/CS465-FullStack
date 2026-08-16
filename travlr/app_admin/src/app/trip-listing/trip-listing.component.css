@@ -1,0 +1,53 @@
+.page-heading {
+  align-items: flex-end;
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.section-label {
+  color: #18725d;
+  font-size: 0.75rem;
+  font-weight: 800;
+  margin: 0 0 5px;
+  text-transform: uppercase;
+}
+
+h1 {
+  color: #17352f;
+  font-size: 2rem;
+  font-weight: 750;
+  margin: 0;
+}
+
+.page-summary {
+  color: #64736f;
+  margin: 7px 0 0;
+}
+
+.loading-state,
+.empty-state {
+  background: #fff;
+  border: 1px solid #d9e1df;
+  border-radius: 6px;
+  color: #53645f;
+  padding: 42px 24px;
+  text-align: center;
+}
+
+.empty-state h2 {
+  color: #263d38;
+  font-size: 1.25rem;
+}
+
+@media (max-width: 575px) {
+  .page-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .page-heading .btn {
+    width: 100%;
+  }
+}

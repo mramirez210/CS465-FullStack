@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>{{title}}</title>
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+<body>
+  <div id="background">
+    <div id="page">
+      {{> header activeAdmin=true}}
+      <div id="contents">
+        <div class="box">
+          <div class="body">
+            <h1>{{title}}</h1>
+            <p><a href="/admin/rooms/new">Add New Room</a></p>
+            <ul id="rooms">
+              {{#each rooms}}
+              <li>
+                <img src="{{image}}" alt="{{name}}" height="120">
+                <h2>{{name}}</h2>
+                <p>{{description}}</p>
+                <span class="rate">{{rate}}</span>
+                <p>
+                  <a href="/admin/rooms/{{@index}}/edit">Edit Room</a> |
+                  <form action="/admin/rooms/{{@index}}/delete" method="post" onsubmit="return confirm('Delete this room?');" style="display:inline;">
+                    <button type="submit" style="background:none;border:none;padding:0;color:#2c9688;text-decoration:underline;cursor:pointer;">Remove</button>
+                  </form>
+                </p>
+              </li>
+              {{/each}}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

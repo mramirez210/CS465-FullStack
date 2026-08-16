@@ -1,0 +1,33 @@
+<article class="trip-card h-100">
+  <img
+      class="trip-image"
+      [src]="'assets/images/' + trip.image.replace('images/', '').replace('/', '')"
+      [alt]="trip.name || 'Trip Image'"
+  >
+  <div class="trip-card-body">
+    <div class="trip-card-heading">
+      <div>
+        <p class="trip-code">{{ trip.code }}</p>
+        <h2>{{ trip.name }}</h2>
+      </div>
+      <p class="trip-price">
+        ${{ (trip.perPerson + '').replace('$', '') }}
+      </p>
+    </div>
+
+    <dl class="trip-meta">
+      <div><dt>Resort</dt><dd>{{ trip.resort }}</dd></div>
+      <div><dt>Duration</dt><dd>{{ trip.length }}</dd></div>
+      <div><dt>Starts</dt><dd>{{ trip.start | date:'MMM d, y':'UTC' }}</dd></div>
+    </dl>
+
+    <div class="trip-description" [innerHTML]="trip.description"></div>
+
+    <div *ngIf="canManage" class="trip-actions">
+      <a class="btn btn-primary" [routerLink]="['/edit-trip', trip.code]">Edit</a>
+      <button class="btn btn-outline-danger" type="button" (click)="requestDelete()">
+        Delete
+      </button>
+    </div>
+  </div>
+</article>
